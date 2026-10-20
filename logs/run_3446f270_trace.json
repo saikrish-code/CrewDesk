@@ -1,0 +1,127 @@
+{
+  "summary": {
+    "run_id": "run_3446f270",
+    "status": "completed",
+    "start_time": "2026-10-20T14:42:10.538330+00:00",
+    "end_time": "2026-10-20T14:42:10.545919+00:00",
+    "total_duration_seconds": 0.007589,
+    "agent_durations": {},
+    "llm_call_count": 5,
+    "token_usage": {
+      "prompt_tokens": 50,
+      "completion_tokens": 75,
+      "total_tokens": 125
+    },
+    "search_request_count": 3,
+    "source_count": 0,
+    "revision_count": 2
+  },
+  "transition_history": [
+    {
+      "source": "START",
+      "destination": "Planner",
+      "reason": "Plan created successfully",
+      "revision_count": 0,
+      "budget_status": "1/30",
+      "timestamp": "2026-10-20T14:42:10.541053+00:00"
+    },
+    {
+      "source": "Planner",
+      "destination": "Researcher",
+      "reason": "Research gathered successfully",
+      "revision_count": 0,
+      "budget_status": "1/30",
+      "timestamp": "2026-10-20T14:42:10.542139+00:00"
+    },
+    {
+      "source": "Researcher",
+      "destination": "Writer",
+      "reason": "Draft written for revision 1",
+      "revision_count": 1,
+      "budget_status": "2/30",
+      "timestamp": "2026-10-20T14:42:10.542889+00:00"
+    },
+    {
+      "source": "Writer",
+      "destination": "Critic",
+      "reason": "Review evaluated: approved=False",
+      "revision_count": 1,
+      "budget_status": "3/30",
+      "timestamp": "2026-10-20T14:42:10.543569+00:00"
+    },
+    {
+      "source": "Critic",
+      "destination": "Writer",
+      "reason": "Draft written for revision 2",
+      "revision_count": 2,
+      "budget_status": "4/30",
+      "timestamp": "2026-10-20T14:42:10.544304+00:00"
+    },
+    {
+      "source": "Writer",
+      "destination": "Critic",
+      "reason": "Review evaluated: approved=True",
+      "revision_count": 2,
+      "budget_status": "5/30",
+      "timestamp": "2026-10-20T14:42:10.545023+00:00"
+    },
+    {
+      "source": "Critic",
+      "destination": "Finalizer",
+      "reason": "Run completed with status: completed",
+      "revision_count": 2,
+      "budget_status": "5/30",
+      "timestamp": "2026-10-20T14:42:10.545591+00:00"
+    }
+  ],
+  "research_plan": {
+    "original_topic": "AI Testing",
+    "sub_questions": [
+      {
+        "question": "Q1?",
+        "objective": "O1",
+        "priority_sources": [
+          "S1"
+        ]
+      },
+      {
+        "question": "Q2?",
+        "objective": "O2",
+        "priority_sources": [
+          "S2"
+        ]
+      },
+      {
+        "question": "Q3?",
+        "objective": "O3",
+        "priority_sources": [
+          "S3"
+        ]
+      }
+    ],
+    "report_outline": [
+      "Intro",
+      "Body",
+      "Conclusion"
+    ]
+  },
+  "final_draft": {
+    "markdown_content": "# Draft 2",
+    "sections_metadata": [],
+    "cited_source_ids": [],
+    "revision_number": 2,
+    "critic_feedback_addressed": "Needs revision Action items: "
+  },
+  "final_review": {
+    "approved": true,
+    "quality_scores": {
+      "coverage": 9.0,
+      "factual_consistency": 9.0,
+      "citation_validity": 9.0,
+      "clarity": 9.0,
+      "completeness": 9.0
+    },
+    "issues": [],
+    "summary": "Approved now"
+  }
+}

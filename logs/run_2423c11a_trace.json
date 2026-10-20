@@ -1,0 +1,40 @@
+{
+  "summary": {
+    "run_id": "run_2423c11a",
+    "status": "failed",
+    "start_time": "2026-10-20T14:43:13.709209+00:00",
+    "end_time": "2026-10-20T14:43:14.105356+00:00",
+    "total_duration_seconds": 0.396147,
+    "agent_durations": {},
+    "llm_call_count": 1,
+    "token_usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 0
+    },
+    "search_request_count": 0,
+    "source_count": 0,
+    "revision_count": 0
+  },
+  "transition_history": [
+    {
+      "source": "START",
+      "destination": "Error",
+      "reason": "Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}",
+      "revision_count": 0,
+      "budget_status": "1/25",
+      "timestamp": "2026-10-20T14:43:14.103866+00:00"
+    },
+    {
+      "source": "Critic",
+      "destination": "Finalizer",
+      "reason": "Run completed with status: failed",
+      "revision_count": 0,
+      "budget_status": "1/25",
+      "timestamp": "2026-10-20T14:43:14.105201+00:00"
+    }
+  ],
+  "research_plan": null,
+  "final_draft": null,
+  "final_review": null
+}

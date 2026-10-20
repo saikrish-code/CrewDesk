@@ -1,0 +1,85 @@
+{
+  "summary": {
+    "run_id": "run_211346ac",
+    "status": "budget_exhausted",
+    "start_time": "2026-10-20T14:43:14.167337+00:00",
+    "end_time": "2026-10-20T14:43:14.178804+00:00",
+    "total_duration_seconds": 0.011467,
+    "agent_durations": {},
+    "llm_call_count": 1,
+    "token_usage": {
+      "prompt_tokens": 10,
+      "completion_tokens": 15,
+      "total_tokens": 25
+    },
+    "search_request_count": 1,
+    "source_count": 0,
+    "revision_count": 1
+  },
+  "transition_history": [
+    {
+      "source": "START",
+      "destination": "Planner",
+      "reason": "Plan created successfully",
+      "revision_count": 0,
+      "budget_status": "1/1",
+      "timestamp": "2026-10-20T14:43:14.170464+00:00"
+    },
+    {
+      "source": "Planner",
+      "destination": "Researcher",
+      "reason": "Research gathered successfully",
+      "revision_count": 0,
+      "budget_status": "1/1",
+      "timestamp": "2026-10-20T14:43:14.174766+00:00"
+    },
+    {
+      "source": "Writer",
+      "destination": "Finalizer",
+      "reason": "Budget exhausted during writing",
+      "revision_count": 1,
+      "budget_status": "1/1",
+      "timestamp": "2026-10-20T14:43:14.176697+00:00"
+    },
+    {
+      "source": "Critic",
+      "destination": "Finalizer",
+      "reason": "Run completed with status: budget_exhausted",
+      "revision_count": 1,
+      "budget_status": "1/1",
+      "timestamp": "2026-10-20T14:43:14.178584+00:00"
+    }
+  ],
+  "research_plan": {
+    "original_topic": "Test Topic",
+    "sub_questions": [
+      {
+        "question": "Q1?",
+        "objective": "O1",
+        "priority_sources": [
+          "S1"
+        ]
+      },
+      {
+        "question": "Q2?",
+        "objective": "O2",
+        "priority_sources": [
+          "S2"
+        ]
+      },
+      {
+        "question": "Q3?",
+        "objective": "O3",
+        "priority_sources": [
+          "S3"
+        ]
+      }
+    ],
+    "report_outline": [
+      "Intro",
+      "Conclusion"
+    ]
+  },
+  "final_draft": null,
+  "final_review": null
+}

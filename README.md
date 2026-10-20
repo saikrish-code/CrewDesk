@@ -32,7 +32,7 @@ npm install
 
 ## Running the Application
 
-### Backend
+### 1. Start Backend (Terminal 1)
 
 #### Windows (PowerShell)
 ```powershell
@@ -45,15 +45,45 @@ uvicorn backend.app.main:app --reload --host 0.0.0.0 --port 8000
 PYTHONPATH=. uvicorn backend.app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-### Frontend
+### 2. Start Frontend (Terminal 2)
 
 ```bash
 cd frontend
 npm run dev
 ```
 
+### 3. Open Browser
+
+Navigate to `http://localhost:3000` to access the CrewDesk dashboard.
+
+## Features
+
+- **Research Topic Input**: Enter a research topic and start a multi-agent research run.
+- **Live Workflow Graph**: Visual status of Planner, Researcher, Writer, Critic, and Finalizer nodes.
+- **Real-time Event Feed**: Stream events from the backend via Server-Sent Events (SSE).
+- **Budget Tracking**: Monitor LLM call usage against configured budget.
+- **Report Rendering**: View the final Markdown report with clickable references.
+- **Revision Counter**: Track revision loops (0/2, 1/2, 2/2).
+
 ## Testing
 
 ```bash
 pytest backend/tests
 ```
+
+## API Endpoints
+
+- `POST /api/runs` - Start a new research run.
+- `GET /api/runs/{run_id}` - Get run status and summary.
+- `GET /api/runs/{run_id}/report` - Get the completed report.
+- `GET /api/runs/{run_id}/events` - Stream live events (SSE).
+- `GET /health` - Health check.
+
+## Configuration
+
+Edit `.env` to configure:
+- `GROQ_API_KEY` - Your Groq API key.
+- `TAVILY_API_KEY` - Your Tavily Search API key.
+- `GROQ_MODEL_NAME` - Model to use (default: llama-3.3-70b-versatile).
+- `MAX_LLM_CALLS_PER_RUN` - Maximum LLM calls per run (default: 25).
+- `MAX_SEARCH_CALLS_PER_RUN` - Maximum search requests per run (default: 15).

@@ -1,0 +1,17 @@
+{
+  "run_id": "run_ae0243de",
+  "status": "completed",
+  "start_time": "2026-10-20T14:43:14.200564+00:00",
+  "end_time": "2026-10-20T14:43:14.207817+00:00",
+  "total_duration_seconds": 0.007253,
+  "agent_durations": {},
+  "llm_call_count": 3,
+  "token_usage": {
+    "prompt_tokens": 30,
+    "completion_tokens": 45,
+    "total_tokens": 75
+  },
+  "search_request_count": 3,
+  "source_count": 0,
+  "revision_count": 1
+}

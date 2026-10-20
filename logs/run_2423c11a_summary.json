@@ -1,0 +1,17 @@
+{
+  "run_id": "run_2423c11a",
+  "status": "failed",
+  "start_time": "2026-10-20T14:43:13.709209+00:00",
+  "end_time": "2026-10-20T14:43:14.105356+00:00",
+  "total_duration_seconds": 0.396147,
+  "agent_durations": {},
+  "llm_call_count": 1,
+  "token_usage": {
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "total_tokens": 0
+  },
+  "search_request_count": 0,
+  "source_count": 0,
+  "revision_count": 0
+}
