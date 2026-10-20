@@ -1,0 +1,17 @@
+{
+  "run_id": "run_5cdd5446",
+  "status": "completed",
+  "start_time": "2026-10-20T14:40:09.746688+00:00",
+  "end_time": "2026-10-20T14:40:09.753016+00:00",
+  "total_duration_seconds": 0.006328,
+  "agent_durations": {},
+  "llm_call_count": 5,
+  "token_usage": {
+    "prompt_tokens": 50,
+    "completion_tokens": 75,
+    "total_tokens": 125
+  },
+  "search_request_count": 3,
+  "source_count": 0,
+  "revision_count": 2
+}

@@ -1,0 +1,17 @@
+{
+  "run_id": "run_fbfc214c",
+  "status": "budget_exhausted",
+  "start_time": "2026-10-20T14:40:09.710325+00:00",
+  "end_time": "2026-10-20T14:40:09.717468+00:00",
+  "total_duration_seconds": 0.007143,
+  "agent_durations": {},
+  "llm_call_count": 1,
+  "token_usage": {
+    "prompt_tokens": 10,
+    "completion_tokens": 15,
+    "total_tokens": 25
+  },
+  "search_request_count": 1,
+  "source_count": 0,
+  "revision_count": 1
+}

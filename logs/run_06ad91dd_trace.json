@@ -1,0 +1,40 @@
+{
+  "summary": {
+    "run_id": "run_06ad91dd",
+    "status": "failed",
+    "start_time": "2026-10-20T14:39:28.821499+00:00",
+    "end_time": "2026-10-20T14:39:28.824056+00:00",
+    "total_duration_seconds": 0.002557,
+    "agent_durations": {},
+    "llm_call_count": 0,
+    "token_usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 0
+    },
+    "search_request_count": 0,
+    "source_count": 0,
+    "revision_count": 0
+  },
+  "transition_history": [
+    {
+      "source": "START",
+      "destination": "Error",
+      "reason": "Topic cannot be blank",
+      "revision_count": 0,
+      "budget_status": "0/25",
+      "timestamp": "2026-10-20T14:39:28.822979+00:00"
+    },
+    {
+      "source": "Critic",
+      "destination": "Finalizer",
+      "reason": "Run completed with status: failed",
+      "revision_count": 0,
+      "budget_status": "0/25",
+      "timestamp": "2026-10-20T14:39:28.823930+00:00"
+    }
+  ],
+  "research_plan": null,
+  "final_draft": null,
+  "final_review": null
+}

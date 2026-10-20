@@ -1,0 +1,17 @@
+{
+  "run_id": "run_a9ee651f",
+  "status": "completed",
+  "start_time": "2026-10-20T14:38:53.788609+00:00",
+  "end_time": "2026-10-20T14:38:53.798294+00:00",
+  "total_duration_seconds": 0.009685,
+  "agent_durations": {},
+  "llm_call_count": 5,
+  "token_usage": {
+    "prompt_tokens": 50,
+    "completion_tokens": 75,
+    "total_tokens": 125
+  },
+  "search_request_count": 3,
+  "source_count": 0,
+  "revision_count": 2
+}
