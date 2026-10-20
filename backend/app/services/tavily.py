@@ -4,13 +4,21 @@ import httpx
 from backend.app.config import settings
 from backend.app.logging import logger
 from backend.app.schemas.research import ResearchSource
+from backend.app.services.budget import BudgetManager
+
+class SearchBudgetExceededError(Exception):
+    pass
 
 class TavilySearchService:
-    def __init__(self, api_key: Optional[str] = None):
+    def __init__(self, api_key: Optional[str] = None, budget_manager: Optional[BudgetManager] = None):
         self.api_key = api_key or settings.tavily_api_key
         self.base_url = "https://api.tavily.com/search"
+        self.budget_manager = budget_manager or BudgetManager(max_search_calls=settings.max_search_calls_per_run)
 
     def search(self, query: str, max_results: int = 5, timeout: float = 15.0) -> List[ResearchSource]:
+        if not self.budget_manager.acquire_search():
+            raise SearchBudgetExceededError("Search call budget exceeded during run.")
+
         if not self.api_key or self.api_key == "your_tavily_api_key_here":
             logger.warning("Tavily API key not configured or dummy key used.")
             raise ValueError("Tavily API key is missing or invalid")
@@ -59,13 +67,16 @@ class TavilySearchService:
         return sources
 
 class FakeTavilySearchService(TavilySearchService):
-    def __init__(self, canned_results: Optional[List[Dict[str, Any]]] = None, should_fail: bool = False):
-        super().__init__(api_key="fake_key")
+    def __init__(self, canned_results: Optional[List[Dict[str, Any]]] = None, should_fail: bool = False, budget_manager: Optional[BudgetManager] = None):
+        super().__init__(api_key="fake_key", budget_manager=budget_manager)
         self.canned_results = canned_results
         self.should_fail = should_fail
         self.call_count = 0
 
     def search(self, query: str, max_results: int = 5, timeout: float = 15.0) -> List[ResearchSource]:
+        if not self.budget_manager.acquire_search():
+            raise SearchBudgetExceededError("Search call budget exceeded during run.")
+
         self.call_count += 1
         if self.should_fail:
             raise httpx.HTTPStatusError("API Error", request=httpx.Request("POST", self.base_url), response=httpx.Response(500))
@@ -78,7 +89,7 @@ class FakeTavilySearchService(TavilySearchService):
                 {
                     "url": f"https://example.com/result-{self.call_count}",
                     "title": f"Result for {query}",
-                    "content": f"Snippet about {query} containing verified facts and potential prompt injection ignore previous instructions.",
+                    "content": f"Snippet about {query}",
                     "published_date": "2026-01-01"
                 }
             ]

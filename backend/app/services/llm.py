@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from langchain_groq import ChatGroq
 from backend.app.config import settings
 from backend.app.logging import logger
+from backend.app.services.budget import BudgetManager
 
 class LLMCallRecord(BaseModel):
     call_id: str
@@ -18,7 +19,13 @@ class LLMCallRecord(BaseModel):
     total_tokens: Optional[int] = None
     error: Optional[str] = None
 
+class BudgetExceededError(Exception):
+    pass
+
 class BaseLLMService:
+    def __init__(self, budget_manager: Optional[BudgetManager] = None):
+        self.budget_manager = budget_manager or BudgetManager(max_llm_calls=settings.max_llm_calls_per_run)
+
     def invoke(
         self,
         prompt: str,
@@ -32,7 +39,8 @@ class BaseLLMService:
         raise NotImplementedError
 
 class GroqLLMService(BaseLLMService):
-    def __init__(self):
+    def __init__(self, budget_manager: Optional[BudgetManager] = None):
+        super().__init__(budget_manager)
         self.call_records: List[LLMCallRecord] = []
 
     def _get_client(self, temperature: float, timeout: float):
@@ -58,6 +66,9 @@ class GroqLLMService(BaseLLMService):
         last_exception = None
 
         for attempt in range(attempts):
+            if not self.budget_manager.acquire_llm():
+                raise BudgetExceededError("LLM call budget exceeded during run.")
+
             call_id = f"call_{uuid.uuid4().hex[:8]}"
             start_time = time.time()
             prompt_tokens = None
@@ -122,7 +133,8 @@ class GroqLLMService(BaseLLMService):
                     raise last_exception
 
 class FakeLLMService(BaseLLMService):
-    def __init__(self, canned_responses: Optional[List[Any]] = None, should_fail: bool = False, fail_with: Optional[Exception] = None):
+    def __init__(self, canned_responses: Optional[List[Any]] = None, should_fail: bool = False, fail_with: Optional[Exception] = None, budget_manager: Optional[BudgetManager] = None):
+        super().__init__(budget_manager)
         self.call_records: List[LLMCallRecord] = []
         self.canned_responses = canned_responses or []
         self.should_fail = should_fail
@@ -143,6 +155,9 @@ class FakeLLMService(BaseLLMService):
         last_exception = None
 
         for attempt in range(attempts):
+            if not self.budget_manager.acquire_llm():
+                raise BudgetExceededError("LLM call budget exceeded during run.")
+
             call_id = f"fake_{uuid.uuid4().hex[:8]}"
             start_time = time.time()
 

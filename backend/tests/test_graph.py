@@ -93,4 +93,4 @@ def test_workflow_budget_exceeded():
     planner = PlannerAgent(llm_service=FakeLLMService(should_fail=True))
     workflow = CrewDeskWorkflow(planner=planner, llm_budget=0)
     state = workflow.run("AI Testing")
-    assert state["status"] == "budget_exceeded"
+    assert state["status"] == "budget_exhausted"
