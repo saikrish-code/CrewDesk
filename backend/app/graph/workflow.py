@@ -14,6 +14,7 @@ from backend.app.schemas.critic import CriticReview
 from backend.app.services.budget import BudgetManager
 from backend.app.services.llm import BudgetExceededError
 from backend.app.services.tavily import SearchBudgetExceededError
+from backend.app.logging.audit import AuditLogger
 from backend.app.logging import logger
 
 class CrewDeskWorkflow:
@@ -58,17 +59,21 @@ class CrewDeskWorkflow:
         logger.info(f"Transition: {source} -> {destination} | Reason: {reason} | Rev: {state['revision_count']} | Budget: {stats['llm_usage']}/{stats['max_llm_calls']}")
 
     def planning_node(self, state: CrewDeskState) -> CrewDeskState:
+        audit = AuditLogger(state["run_id"])
         try:
             plan = self.planner.create_plan(state["original_topic"], state.get("context"))
             state["research_plan"] = plan.model_dump()
+            audit.log_event("PlannerAgent", {"topic": state["original_topic"]}, output_data=plan.model_dump())
             self._record_transition(state, "START", "Planner", "Plan created successfully")
         except (BudgetExceededError, SearchBudgetExceededError) as e:
             state["status"] = "budget_exhausted"
             state["error"] = str(e)
+            audit.log_event("PlannerAgent", {"topic": state["original_topic"]}, error=str(e))
             self._record_transition(state, "START", "Finalizer", "Budget exhausted during planning")
         except Exception as e:
             state["status"] = "failed"
             state["error"] = str(e)
+            audit.log_event("PlannerAgent", {"topic": state["original_topic"]}, error=str(e))
             self._record_transition(state, "START", "Error", str(e))
         return state
 
@@ -76,18 +81,22 @@ class CrewDeskWorkflow:
         if state["status"] in ["failed", "budget_exhausted"]:
             return state
 
+        audit = AuditLogger(state["run_id"])
         try:
             plan_obj = ResearchPlan(**state["research_plan"])
             research_data = self.researcher.conduct_research(plan_obj)
             state["research_findings"] = research_data.model_dump()
+            audit.log_event("ResearcherAgent", state["research_plan"], output_data=research_data.model_dump())
             self._record_transition(state, "Planner", "Researcher", "Research gathered successfully")
         except (BudgetExceededError, SearchBudgetExceededError) as e:
             state["status"] = "budget_exhausted"
             state["error"] = str(e)
+            audit.log_event("ResearcherAgent", state["research_plan"], error=str(e))
             self._record_transition(state, "Planner", "Finalizer", "Budget exhausted during research")
         except Exception as e:
             state["status"] = "failed"
             state["error"] = str(e)
+            audit.log_event("ResearcherAgent", state["research_plan"], error=str(e))
             self._record_transition(state, "Planner", "Error", str(e))
         return state
 
@@ -95,6 +104,7 @@ class CrewDeskWorkflow:
         if state["status"] in ["failed", "budget_exhausted"]:
             return state
 
+        audit = AuditLogger(state["run_id"])
         try:
             plan_obj = ResearchPlan(**state["research_plan"])
             research_data = ResearchReportData(**state["research_findings"])
@@ -106,6 +116,7 @@ class CrewDeskWorkflow:
             state["revision_count"] += 1
             report = self.writer.write_report(plan_obj, research_data, critic_feedback=critic_feedback, revision_number=state["revision_count"])
             state["current_draft"] = report.model_dump()
+            audit.log_event("WriterAgent", {"revision": state["revision_count"], "feedback": critic_feedback}, output_data=report.model_dump())
             source_node = "Critic" if state["revision_count"] > 1 else "Researcher"
             self._record_transition(state, source_node, "Writer", f"Draft written for revision {state['revision_count']}")
         except (BudgetExceededError, SearchBudgetExceededError) as e:
@@ -113,10 +124,12 @@ class CrewDeskWorkflow:
             state["error"] = str(e)
             if state.get("current_draft"):
                 state["current_draft"]["markdown_content"] += "\n\n> [INCOMPLETE: Budget Exhausted]"
+            audit.log_event("WriterAgent", {"revision": state["revision_count"]}, error=str(e))
             self._record_transition(state, "Writer", "Finalizer", "Budget exhausted during writing")
         except Exception as e:
             state["status"] = "failed"
             state["error"] = str(e)
+            audit.log_event("WriterAgent", {"revision": state["revision_count"]}, error=str(e))
             self._record_transition(state, "Writer", "Error", str(e))
         return state
 
@@ -124,20 +137,24 @@ class CrewDeskWorkflow:
         if state["status"] in ["failed", "budget_exhausted"]:
             return state
 
+        audit = AuditLogger(state["run_id"])
         try:
             plan_obj = ResearchPlan(**state["research_plan"])
             research_data = ResearchReportData(**state["research_findings"])
             report_obj = ResearchReport(**state["current_draft"])
             review = self.critic.evaluate_report(state["original_topic"], plan_obj, research_data, report_obj, revision_number=state["revision_count"])
             state["critic_review"] = review.model_dump()
+            audit.log_event("CriticAgent", {"revision": state["revision_count"]}, output_data=review.model_dump(), metadata={"approved": review.approved})
             self._record_transition(state, "Writer", "Critic", f"Review evaluated: approved={review.approved}")
         except (BudgetExceededError, SearchBudgetExceededError) as e:
             state["status"] = "budget_exhausted"
             state["error"] = str(e)
+            audit.log_event("CriticAgent", {"revision": state["revision_count"]}, error=str(e))
             self._record_transition(state, "Critic", "Finalizer", "Budget exhausted during criticism")
         except Exception as e:
             state["status"] = "failed"
             state["error"] = str(e)
+            audit.log_event("CriticAgent", {"revision": state["revision_count"]}, error=str(e))
             self._record_transition(state, "Critic", "Error", str(e))
         return state
 
@@ -183,9 +200,13 @@ class CrewDeskWorkflow:
         return workflow.compile()
 
     def run(self, topic: str, context: Optional[str] = None) -> CrewDeskState:
+        run_id = f"run_{uuid.uuid4().hex[:8]}"
+        audit_logger = AuditLogger(run_id)
         stats = self.budget_manager.get_stats()
+        start_time_str = datetime.datetime.now(datetime.timezone.utc).isoformat()
+
         initial_state: CrewDeskState = {
-            "run_id": f"run_{uuid.uuid4().hex[:8]}",
+            "run_id": run_id,
             "original_topic": topic,
             "context": context,
             "research_plan": None,
@@ -197,10 +218,44 @@ class CrewDeskWorkflow:
             "llm_usage": stats["llm_usage"],
             "status": "running",
             "error": None,
-            "timestamps": {"start": datetime.datetime.now(datetime.timezone.utc).isoformat()},
+            "timestamps": {"start": start_time_str},
             "transition_history": []
         }
+
         final_state = self.graph.invoke(initial_state)
-        final_state["timestamps"]["end"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
-        final_state["llm_usage"] = self.budget_manager.get_stats()["llm_usage"]
+        end_time_str = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        final_state["timestamps"]["end"] = end_time_str
+
+        stats_final = self.budget_manager.get_stats()
+        final_state["llm_usage"] = stats_final["llm_usage"]
+
+        start_dt = datetime.datetime.fromisoformat(start_time_str)
+        end_dt = datetime.datetime.fromisoformat(end_time_str)
+        duration = (end_dt - start_dt).total_seconds()
+
+        source_count = 0
+        if final_state.get("research_findings"):
+            findings_data = ResearchReportData(**final_state["research_findings"])
+            unique_sources = set()
+            for r in findings_data.results:
+                for s in r.sources:
+                    unique_sources.add(s.url)
+            source_count = len(unique_sources)
+
+        audit_logger.finalize_run(
+            status=final_state["status"],
+            start_time=start_time_str,
+            end_time=end_time_str,
+            total_duration_seconds=duration,
+            agent_durations={},
+            llm_usage=stats_final["llm_usage"],
+            search_usage=stats_final["search_usage"],
+            source_count=source_count,
+            revision_count=final_state["revision_count"],
+            transition_history=final_state["transition_history"],
+            plan=final_state.get("research_plan"),
+            draft=final_state.get("current_draft"),
+            review=final_state.get("critic_review")
+        )
+
         return final_state

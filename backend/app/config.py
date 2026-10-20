@@ -6,6 +6,8 @@ class Settings(BaseSettings):
     groq_model_name: str = "llama-3.3-70b-versatile"
     max_llm_calls_per_run: int = 25
     max_search_calls_per_run: int = 15
+    max_log_file_size_bytes: int = 10 * 1024 * 1024
+    log_retention_days: int = 30
     port: int = 8000
     host: str = "0.0.0.0"
 

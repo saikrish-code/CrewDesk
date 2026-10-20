@@ -1,0 +1,14 @@
+{
+  "run_id": "test_run_audit_1",
+  "status": "completed",
+  "start_time": "2026-10-20T12:00:00Z",
+  "end_time": "2026-10-20T12:00:05Z",
+  "total_duration_seconds": 5.0,
+  "agent_durations": {
+    "PlannerAgent": 1.0
+  },
+  "llm_call_count": 2,
+  "search_request_count": 1,
+  "source_count": 3,
+  "revision_count": 1
+}

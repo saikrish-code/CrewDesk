@@ -1,0 +1,12 @@
+{
+  "run_id": "run_bf0d89c3",
+  "status": "completed",
+  "start_time": "2026-10-20T14:26:42.538878+00:00",
+  "end_time": "2026-10-20T14:26:42.546017+00:00",
+  "total_duration_seconds": 0.007139,
+  "agent_durations": {},
+  "llm_call_count": 5,
+  "search_request_count": 3,
+  "source_count": 0,
+  "revision_count": 2
+}

@@ -1,0 +1,12 @@
+{
+  "run_id": "run_a7946a27",
+  "status": "budget_exhausted",
+  "start_time": "2026-10-20T14:26:42.504353+00:00",
+  "end_time": "2026-10-20T14:26:42.512424+00:00",
+  "total_duration_seconds": 0.008071,
+  "agent_durations": {},
+  "llm_call_count": 1,
+  "search_request_count": 1,
+  "source_count": 0,
+  "revision_count": 1
+}

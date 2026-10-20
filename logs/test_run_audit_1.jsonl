@@ -1,0 +1,2 @@
+{"run_id": "test_run_audit_1", "event_id": "evt_d6f4f27b", "agent_name": "PlannerAgent", "input": {"topic": "Test Topic", "key": "[REDACTED]"}, "output": {"status": "ok"}, "error": null, "metadata": {}, "timestamp": "2026-10-20T14:25:55.603638+00:00"}
+{"run_id": "test_run_audit_1", "event_id": "evt_6b10aa61", "agent_name": "PlannerAgent", "input": {"topic": "Test Topic", "key": "[REDACTED]"}, "output": {"status": "ok"}, "error": null, "metadata": {}, "timestamp": "2026-10-20T14:26:42.488308+00:00"}
