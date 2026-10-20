@@ -144,7 +144,7 @@ class CrewDeskWorkflow:
             report_obj = ResearchReport(**state["current_draft"])
             review = self.critic.evaluate_report(state["original_topic"], plan_obj, research_data, report_obj, revision_number=state["revision_count"])
             state["critic_review"] = review.model_dump()
-            audit.log_event("CriticAgent", {"revision": state["revision_count"]}, output_data=review.model_dump(), metadata={"approved": review.approved})
+            audit.log_event("CriticAgent", {"revision": state["revision_count"]}, output_data=review.model_dump(), metadata={"approved": review.approved, "feedback_sent_to_writer": review.summary})
             self._record_transition(state, "Writer", "Critic", f"Review evaluated: approved={review.approved}")
         except (BudgetExceededError, SearchBudgetExceededError) as e:
             state["status"] = "budget_exhausted"
@@ -242,6 +242,14 @@ class CrewDeskWorkflow:
                     unique_sources.add(s.url)
             source_count = len(unique_sources)
 
+        total_prompt = sum(r.prompt_tokens or 0 for svc in [self.planner.llm_service, self.researcher.llm_service, self.writer.llm_service, self.critic.llm_service] for r in getattr(svc, "call_records", []))
+        total_completion = sum(r.completion_tokens or 0 for svc in [self.planner.llm_service, self.researcher.llm_service, self.writer.llm_service, self.critic.llm_service] for r in getattr(svc, "call_records", []))
+        token_usage = {
+            "prompt_tokens": total_prompt,
+            "completion_tokens": total_completion,
+            "total_tokens": total_prompt + total_completion
+        }
+
         audit_logger.finalize_run(
             status=final_state["status"],
             start_time=start_time_str,
@@ -253,6 +261,7 @@ class CrewDeskWorkflow:
             source_count=source_count,
             revision_count=final_state["revision_count"],
             transition_history=final_state["transition_history"],
+            token_usage=token_usage,
             plan=final_state.get("research_plan"),
             draft=final_state.get("current_draft"),
             review=final_state.get("critic_review")

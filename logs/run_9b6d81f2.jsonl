@@ -1,0 +1,1 @@
+{"run_id": "run_9b6d81f2", "event_id": "evt_9eda9b11", "agent_name": "PlannerAgent", "input": {"topic": "AI Testing"}, "output": null, "error": "LLM call budget exceeded during run.", "metadata": {}, "timestamp": "2026-10-20T14:34:55.458537+00:00"}

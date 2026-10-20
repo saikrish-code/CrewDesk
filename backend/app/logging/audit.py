@@ -26,6 +26,7 @@ class AuditLogger:
             val = data
             for pattern in self.secret_patterns:
                 val = pattern.sub("[REDACTED]", val)
+            val = re.sub(r"[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]", "", val)
             return val
         elif isinstance(data, dict):
             return {k: self.redact(v) for k, v in data.items()}
@@ -72,6 +73,7 @@ class AuditLogger:
         source_count: int,
         revision_count: int,
         transition_history: List[Dict[str, Any]],
+        token_usage: Optional[Dict[str, Any]] = None,
         plan: Optional[Dict[str, Any]] = None,
         draft: Optional[Dict[str, Any]] = None,
         review: Optional[Dict[str, Any]] = None
@@ -84,6 +86,7 @@ class AuditLogger:
             "total_duration_seconds": total_duration_seconds,
             "agent_durations": agent_durations,
             "llm_call_count": llm_usage,
+            "token_usage": token_usage or {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
             "search_request_count": search_usage,
             "source_count": source_count,
             "revision_count": revision_count
@@ -122,6 +125,7 @@ def print_run_trace(run_id: str, logs_dir: str = "logs") -> None:
     print(f"Status: {summary.get('status')}")
     print(f"Duration: {summary.get('total_duration_seconds')}s")
     print(f"LLM Calls: {summary.get('llm_call_count')} | Search Requests: {summary.get('search_request_count')}")
+    print(f"Token Usage: {summary.get('token_usage')}")
     print(f"Sources: {summary.get('source_count')} | Revisions: {summary.get('revision_count')}")
     print("\n--- Transition History ---")
     for t in trace.get("transition_history", []):

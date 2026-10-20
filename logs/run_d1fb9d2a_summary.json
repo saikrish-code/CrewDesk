@@ -1,0 +1,17 @@
+{
+  "run_id": "run_d1fb9d2a",
+  "status": "budget_exhausted",
+  "start_time": "2026-10-20T14:35:14.640710+00:00",
+  "end_time": "2026-10-20T14:35:14.644915+00:00",
+  "total_duration_seconds": 0.004205,
+  "agent_durations": {},
+  "llm_call_count": 0,
+  "token_usage": {
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "total_tokens": 0
+  },
+  "search_request_count": 0,
+  "source_count": 0,
+  "revision_count": 0
+}

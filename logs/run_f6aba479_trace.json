@@ -1,0 +1,111 @@
+{
+  "summary": {
+    "run_id": "run_f6aba479",
+    "status": "completed",
+    "start_time": "2026-10-20T14:34:55.423513+00:00",
+    "end_time": "2026-10-20T14:34:55.430374+00:00",
+    "total_duration_seconds": 0.006861,
+    "agent_durations": {},
+    "llm_call_count": 3,
+    "token_usage": {
+      "prompt_tokens": 30,
+      "completion_tokens": 45,
+      "total_tokens": 75
+    },
+    "search_request_count": 3,
+    "source_count": 0,
+    "revision_count": 1
+  },
+  "transition_history": [
+    {
+      "source": "START",
+      "destination": "Planner",
+      "reason": "Plan created successfully",
+      "revision_count": 0,
+      "budget_status": "1/20",
+      "timestamp": "2026-10-20T14:34:55.425063+00:00"
+    },
+    {
+      "source": "Planner",
+      "destination": "Researcher",
+      "reason": "Research gathered successfully",
+      "revision_count": 0,
+      "budget_status": "1/20",
+      "timestamp": "2026-10-20T14:34:55.426513+00:00"
+    },
+    {
+      "source": "Researcher",
+      "destination": "Writer",
+      "reason": "Draft written for revision 1",
+      "revision_count": 1,
+      "budget_status": "2/20",
+      "timestamp": "2026-10-20T14:34:55.428336+00:00"
+    },
+    {
+      "source": "Writer",
+      "destination": "Critic",
+      "reason": "Review evaluated: approved=True",
+      "revision_count": 1,
+      "budget_status": "3/20",
+      "timestamp": "2026-10-20T14:34:55.429350+00:00"
+    },
+    {
+      "source": "Critic",
+      "destination": "Finalizer",
+      "reason": "Run completed with status: completed",
+      "revision_count": 1,
+      "budget_status": "3/20",
+      "timestamp": "2026-10-20T14:34:55.430064+00:00"
+    }
+  ],
+  "research_plan": {
+    "original_topic": "AI Testing",
+    "sub_questions": [
+      {
+        "question": "Q1?",
+        "objective": "O1",
+        "priority_sources": [
+          "S1"
+        ]
+      },
+      {
+        "question": "Q2?",
+        "objective": "O2",
+        "priority_sources": [
+          "S2"
+        ]
+      },
+      {
+        "question": "Q3?",
+        "objective": "O3",
+        "priority_sources": [
+          "S3"
+        ]
+      }
+    ],
+    "report_outline": [
+      "Intro",
+      "Body",
+      "Conclusion"
+    ]
+  },
+  "final_draft": {
+    "markdown_content": "# Report",
+    "sections_metadata": [],
+    "cited_source_ids": [],
+    "revision_number": 1,
+    "critic_feedback_addressed": null
+  },
+  "final_review": {
+    "approved": true,
+    "quality_scores": {
+      "coverage": 9.0,
+      "factual_consistency": 9.0,
+      "citation_validity": 9.0,
+      "clarity": 9.0,
+      "completeness": 9.0
+    },
+    "issues": [],
+    "summary": "Approved"
+  }
+}
